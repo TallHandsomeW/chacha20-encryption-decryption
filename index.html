@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChaCha20 Cipher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <div>
+        <h1>ChaCha20 Cipher</h1>
+        <p class="subtitle">Enkripsi &amp; Dekripsi Pesan Teks</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Card -->
+  <div class="card">
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tabEnc" onclick="switchTab('enc')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Enkripsi
+      </button>
+      <button class="tab-btn" id="tabDec" onclick="switchTab('dec')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 6.09-4.93M17 11V7"/>
+        </svg>
+        Dekripsi
+      </button>
+    </div>
+
+    <!-- ===== PANEL ENKRIPSI ===== -->
+    <div id="panelEnc">
+
+      <!-- Plaintext -->
+      <div class="field">
+        <label for="plaintextInput">Plaintext (Pesan Asli)</label>
+        <textarea id="plaintextInput" placeholder="Masukkan pesan yang ingin dienkripsi..."></textarea>
+      </div>
+
+      <!-- Key + Nonce: 2 kolom berdampingan -->
+      <div class="field-row">
+        <div class="field" style="margin-bottom:0">
+          <label for="keyInputEnc">Key (32 karakter)</label>
+          <div class="input-group">
+            <input type="password" id="keyInputEnc" placeholder="Masukkan secret key..." autocomplete="off" spellcheck="false" />
+            <div class="input-actions">
+              <button class="icon-btn" title="Tampilkan/sembunyikan" onclick="toggleKeyVisibility('keyInputEnc', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+              <button class="icon-btn" title="Generate key acak" onclick="doGenerateKey('keyInputEnc')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <label for="nonceInputEnc">Nonce (12 byte)</label>
+          <div class="input-group">
+            <input type="text" id="nonceInputEnc" placeholder="Otomatis / manual..." autocomplete="off" spellcheck="false" />
+            <div class="input-actions">
+              <button class="icon-btn" title="Generate nonce acak" onclick="doGenerateNonce('nonceInputEnc')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="alert alert-error" id="errorEnc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="errorEncMsg"></span>
+      </div>
+
+      <!-- Tombol Enkripsi -->
+      <button class="btn btn-primary" onclick="doEncrypt()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Enkripsi Pesan
+      </button>
+
+      <!-- Output Ciphertext -->
+      <div class="result-box" id="resultEnc">
+        <div class="result-header">
+          <span class="result-label">Ciphertext (Hasil Enkripsi)</span>
+          <div class="result-actions">
+            <button class="result-btn" onclick="copyResult('ciphertextOut', this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              Salin
+            </button>
+            <button class="result-btn result-btn-danger" onclick="resetEnc()" title="Hapus">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="result-content" id="ciphertextOut"></div>
+      </div>
+
+    </div><!-- /panelEnc -->
+
+
+    <!-- ===== PANEL DEKRIPSI ===== -->
+    <div id="panelDec" style="display:none">
+
+      <!-- Ciphertext input -->
+      <div class="field">
+        <label for="ciphertextInput">Ciphertext (Pesan Terenkripsi)</label>
+        <textarea id="ciphertextInput" class="mono" placeholder="Masukkan ciphertext yang ingin didekripsi..."></textarea>
+      </div>
+
+      <!-- Key + Nonce: 2 kolom berdampingan -->
+      <div class="field-row">
+        <div class="field" style="margin-bottom:0">
+          <label for="keyInputDec">Key (32 karakter)</label>
+          <div class="input-group">
+            <input type="password" id="keyInputDec" placeholder="Masukkan secret key..." autocomplete="off" spellcheck="false" />
+            <div class="input-actions">
+              <button class="icon-btn" title="Tampilkan/sembunyikan" onclick="toggleKeyVisibility('keyInputDec', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <label for="nonceInputDec">Nonce (12 byte)</label>
+          <div class="input-group">
+            <input type="text" id="nonceInputDec" placeholder="Masukkan nonce..." autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="alert alert-error" id="errorDec">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="errorDecMsg"></span>
+      </div>
+
+      <!-- Tombol Dekripsi -->
+      <button class="btn btn-primary" onclick="doDecrypt()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 6.09-4.93M17 11V7"/>
+        </svg>
+        Dekripsi Pesan
+      </button>
+
+      <!-- Output Plaintext -->
+      <div class="result-box" id="resultDec">
+        <div class="result-header">
+          <span class="result-label">Plaintext (Hasil Dekripsi)</span>
+          <div class="result-actions">
+            <button class="result-btn" onclick="copyResult('plaintextOut', this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              Salin
+            </button>
+            <button class="result-btn result-btn-danger" onclick="resetDec()" title="Hapus">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="result-content" id="plaintextOut"></div>
+      </div>
+
+    </div><!-- /panelDec -->
+
+  </div><!-- /card -->
+
+  <!-- Info strip -->
+  <div class="info-strip">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+    Semua proses berjalan di sisi klien - Tidak ada data dikirim ke server
+  </div>
+
+  <footer class="app-footer">
+    <p>Implementasi ChaCha20 - Mata Kuliah Sistem Keamanan</p>
+    <p>Universitas Maritim Raja Ali Haji - 2025/2026</p>
+    <p>Willy Hadipermana - Cinto Aprilman Halawa - Raga Tapa Dhijaya</p>
+  </footer>
+
+</div>
+
+<script src="chacha20.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
