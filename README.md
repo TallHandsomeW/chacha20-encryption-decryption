@@ -1,144 +1,146 @@
-# ChaCha20 Cipher Web Application
+# 🔐 ChaCha20 Cipher — Web App
 
-Aplikasi web sederhana untuk melakukan enkripsi dan dekripsi pesan teks menggunakan algoritma kriptografi stream cipher ChaCha20 berdasarkan standar RFC 8439.
+Implementasi algoritma enkripsi **ChaCha20 (RFC 8439)** berbasis web, berjalan sepenuhnya di sisi klien (client-side) tanpa mengirimkan data ke server.
 
-## Deskripsi
+> Mata Kuliah: Sistem Keamanan  
+> Universitas Maritim Raja Ali Haji — 2025/2026  
+> **Tim:** Willy Hadipermana · Cinto Aprilman Halawa · Raga Tapa Dhijaya
 
-Proyek ini merupakan implementasi algoritma ChaCha20 berbasis web yang dikembangkan sebagai tugas Mata Kuliah Sistem Keamanan.
+---
 
-Aplikasi berjalan sepenuhnya di sisi klien (client-side), sehingga seluruh proses enkripsi dan dekripsi dilakukan langsung di browser tanpa mengirim data ke server.
+## 📋 Deskripsi
 
-## Fitur
+Aplikasi ini mengimplementasikan algoritma stream cipher **ChaCha20** yang dirancang oleh D.J. Bernstein (2008) dan distandardisasi dalam **RFC 8439**. Pengguna dapat melakukan enkripsi dan dekripsi teks secara langsung di browser, tanpa instalasi apapun.
 
-- Enkripsi pesan teks menggunakan ChaCha20
-- Dekripsi ciphertext menjadi plaintext
-- Generate key acak 256-bit (32 byte)
-- Generate nonce acak 96-bit (12 byte)
-- Validasi input key dan nonce
-- Salin hasil enkripsi/dekripsi ke clipboard
-- Antarmuka web sederhana dan responsif
-- Tidak memerlukan koneksi server
+---
 
-## Teknologi yang Digunakan
+## ✨ Fitur
 
-- HTML5
-- CSS3
-- JavaScript (Vanilla JS)
-- Web Crypto API
+- **Enkripsi teks** menggunakan ChaCha20 dengan key dan nonce
+- **Dekripsi ciphertext** kembali ke plaintext asli
+- **Generate key acak** 32 byte (256-bit) secara kriptografis aman
+- **Generate nonce acak** 12 byte (96-bit) secara kriptografis aman
+- **Sinkronisasi key & nonce** otomatis antar tab enkripsi ↔ dekripsi
+- **Salin hasil** ke clipboard dengan satu klik
+- **Toggle visibilitas key** untuk keamanan saat input
+- **Shortcut keyboard** `Ctrl+Enter` / `⌘+Enter` untuk enkripsi/dekripsi cepat
+- **100% client-side** — tidak ada data yang dikirim ke server
 
-## Struktur Proyek
+---
 
-```
-project/
-│
-├── index.html
-├── style.css
-├── app.js
-└── chacha20.js
-```
-
-### Keterangan File
-
-| File | Fungsi |
-|--------|---------|
-| index.html | Tampilan antarmuka aplikasi |
-| style.css | Styling dan desain antarmuka |
-| app.js | Logika interaksi pengguna |
-| chacha20.js | Implementasi algoritma ChaCha20 |
-
-## Implementasi ChaCha20
-
-Implementasi mengikuti standar:
-
-- RFC 8439 - ChaCha20 and Poly1305 for IETF Protocols
-- D. J. Bernstein (2008)
-
-Komponen utama yang diimplementasikan:
-
-- Quarter Round Function
-- ChaCha20 Block Function
-- Key Stream Generation
-- XOR Encryption/Decryption
-- Key 256-bit (32 byte)
-- Nonce 96-bit (12 byte)
-- Counter 32-bit
-
-## Cara Menjalankan
-
-### Opsi 1: Langsung
-
-1. Download seluruh file proyek.
-2. Pastikan semua file berada dalam folder yang sama.
-3. Buka file:
+## 🗂️ Struktur File
 
 ```
-index.html
+chacha20-web/
+├── index.html      # Tampilan antarmuka utama
+├── style.css       # Styling (light theme, IBM Plex Mono + DM Sans)
+├── chacha20.js     # Implementasi algoritma ChaCha20 (RFC 8439)
+└── app.js          # Controller UI (event handling, validasi, copy, dll.)
 ```
 
-menggunakan browser.
+---
 
-### Opsi 2: Menggunakan Live Server
+## 🔬 Detail Implementasi Algoritma
 
-1. Buka proyek menggunakan Visual Studio Code.
-2. Install extension Live Server.
-3. Klik kanan pada `index.html`.
-4. Pilih:
+Implementasi mengikuti spesifikasi **RFC 8439** secara penuh.
+
+### State Inisialisasi (16 kata × 32-bit)
 
 ```
-Open with Live Server
+State[0..3]   = Konstanta "expand 32-byte k" (SIGMA)
+State[4..11]  = Key (32 byte, little-endian)
+State[12]     = Counter (32-bit, mulai dari 1)
+State[13..15] = Nonce (12 byte, little-endian)
 ```
 
-## Cara Penggunaan
+### Quarter Round
+
+Operasi inti yang dijalankan sebanyak 20 putaran (10 column rounds + 10 diagonal rounds):
+
+```
+a += b; d ^= a; d <<<= 16
+c += d; b ^= c; b <<<= 12
+a += b; d ^= a; d <<<= 8
+c += d; b ^= c; b <<<= 7
+```
+
+### Alur Enkripsi / Dekripsi
+
+```
+Plaintext (UTF-8)
+      │
+      ▼
+  strToBytes()          ← TextEncoder
+      │
+      ▼
+ chacha20Crypt()        ← XOR dengan keystream
+      │
+      ▼
+  bytesToHex()          ← Output sebagai hex string
+      │
+      ▼
+Ciphertext (Hex)
+```
+
+Dekripsi identik dengan enkripsi karena sifat XOR simetris.
+
+### Parameter Kriptografi
+
+| Parameter | Ukuran | Format Input |
+|-----------|--------|-------------|
+| Key       | 32 byte (256-bit) | 64 karakter hex |
+| Nonce     | 12 byte (96-bit)  | 24 karakter hex |
+| Counter   | 4 byte (32-bit)   | Dimulai dari 1 (RFC 8439) |
+| Block     | 64 byte           | Keystream per blok |
+
+---
+
+## 🚀 Cara Penggunaan
+
+Tidak diperlukan instalasi. Cukup buka `index.html` di browser modern.
 
 ### Enkripsi
 
-1. Pilih tab **Enkripsi**.
-2. Masukkan plaintext.
-3. Masukkan key atau generate key otomatis.
-4. Masukkan nonce atau generate nonce otomatis.
-5. Klik **Enkripsi Pesan**.
-6. Ciphertext akan ditampilkan.
+1. Masukkan **plaintext** yang ingin dienkripsi
+2. Masukkan **key** (64 karakter hex) atau klik ikon 🔄 untuk generate otomatis
+3. Isi **nonce** atau biarkan kosong (akan di-generate otomatis saat enkripsi)
+4. Klik **Enkripsi Pesan** atau tekan `Ctrl+Enter`
+5. Salin **ciphertext** dan **nonce** yang dihasilkan
 
 ### Dekripsi
 
-1. Pilih tab **Dekripsi**.
-2. Masukkan ciphertext.
-3. Masukkan key yang sama.
-4. Masukkan nonce yang sama.
-5. Klik **Dekripsi Pesan**.
-6. Plaintext asli akan ditampilkan.
+1. Pindah ke tab **Dekripsi**
+2. Masukkan **ciphertext** (format hex)
+3. Masukkan **key** dan **nonce** yang sama saat enkripsi
+4. Klik **Dekripsi Pesan** atau tekan `Ctrl+Enter`
 
-## Keamanan
+> ⚠️ **Penting:** Nonce yang dipakai saat enkripsi harus sama persis saat dekripsi. Simpan nonce bersama ciphertext.
 
-- Seluruh proses dilakukan di browser pengguna.
-- Tidak ada data yang dikirim ke server.
-- Key dan nonce tidak disimpan.
-- Menggunakan generator angka acak dari Web Crypto API.
+---
 
-## Hasil
+## 🛡️ Catatan Keamanan
 
-Aplikasi berhasil melakukan proses:
+- Proses kriptografi berjalan sepenuhnya di browser — tidak ada data yang meninggalkan perangkat
+- Key dan nonce di-generate menggunakan `crypto.getRandomValues()` (CSPRNG bawaan browser)
+- Implementasi ini **tidak menyertakan autentikasi pesan** (MAC). Untuk keamanan produksi, gunakan **ChaCha20-Poly1305** (RFC 8439 AEAD)
+- Aplikasi ini dibuat untuk tujuan **edukasi**
 
-- Enkripsi plaintext menjadi ciphertext.
-- Dekripsi ciphertext menjadi plaintext asli.
-- Penggunaan key dan nonce sesuai spesifikasi ChaCha20 RFC 8439.
+---
 
-## Pengembang
+## 🌐 Kompatibilitas Browser
 
-Mata Kuliah: Sistem Keamanan
+Memerlukan browser modern yang mendukung:
 
-Universitas Maritim Raja Ali Haji
+- `TextEncoder` / `TextDecoder` API
+- `crypto.getRandomValues()` API
+- `navigator.clipboard` API (untuk fitur salin)
+- `DataView` dan `Uint8Array`
 
-Tahun Akademik 2025/2026
+Diuji pada Chrome, Firefox, Edge, dan Safari versi terbaru.
 
-Anggota Kelompok:
+---
 
-- Willy Hadipermana
-- Cinto Aprilman Halawa
-- Raga Tapa Dhijaya
+## 📚 Referensi
 
-## Referensi
-
-1. D. J. Bernstein, "ChaCha, a variant of Salsa20", 2008.
-2. RFC 8439 - ChaCha20 and Poly1305 for IETF Protocols.
-3. Mozilla Developer Network (MDN) Web Crypto API.
+- Bernstein, D.J. (2008). *ChaCha, a variant of Salsa20*
+- [RFC 8439](https://www.rfc-editor.org/rfc/rfc8439) — ChaCha20 and Poly1305 for IETF Protocols
