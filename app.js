@@ -1,10 +1,6 @@
-/**
- * app.js — Controller UI
- * ChaCha20 Web App · Universitas Maritim Raja Ali Haji 2025/2026
- */
 "use strict";
 
-// ── Tab Switching dengan sinkronisasi key & nonce ──
+// ── TAB SWITCHING ──
 function switchTab(tab) {
   if (tab === 'dec') {
     const k = document.getElementById('keyInputEnc').value;
@@ -23,7 +19,7 @@ function switchTab(tab) {
   document.getElementById('tabDec').classList.toggle('active', tab === 'dec');
 }
 
-// ── Enkripsi ──
+// ── ENKRIPSI ──
 function doEncrypt() {
   clearError('enc');
   const pt    = document.getElementById('plaintextInput').value.trim();
@@ -38,14 +34,13 @@ function doEncrypt() {
     document.getElementById('ciphertextOut').textContent = ciphertext;
     if (!nonce) document.getElementById('nonceInputEnc').value = usedNonce;
     showResult('enc');
-    // Auto-clear panel dekripsi agar tidak ada data lama yang membingungkan
     resetDec();
   } catch (e) {
     showError('enc', e.message);
   }
 }
 
-// ── Dekripsi ──
+// ── DEKRIPSI ──
 function doDecrypt() {
   clearError('dec');
   const ct    = document.getElementById('ciphertextInput').value.trim();
@@ -65,20 +60,21 @@ function doDecrypt() {
   }
 }
 
-// ── Generate ──
+// ── GENERATE KEY ──
 function doGenerateKey(id) {
   const el = document.getElementById(id);
   el.value = generateKey();
   flash(el);
 }
 
+// ── GENERATE NONCE ──
 function doGenerateNonce(id) {
   const el = document.getElementById(id);
   el.value = generateNonceHex();
   flash(el);
 }
 
-// ── Toggle key visibility ──
+// ── TOGGLE VISIBILITAS KEY ──
 function toggleKeyVisibility(id, btn) {
   const el = document.getElementById(id);
   const show = el.type === 'password';
@@ -94,7 +90,7 @@ function toggleKeyVisibility(id, btn) {
       </svg>`;
 }
 
-// ── Reset ──
+// ── RESET PANEL ENKRIPSI ──
 function resetEnc() {
   document.getElementById('plaintextInput').value = '';
   document.getElementById('keyInputEnc').value    = '';
@@ -103,6 +99,7 @@ function resetEnc() {
   hideResult('enc'); clearError('enc');
 }
 
+// ── RESET PANEL DEKRIPSI ──
 function resetDec() {
   document.getElementById('ciphertextInput').value = '';
   document.getElementById('keyInputDec').value     = '';
@@ -111,7 +108,7 @@ function resetDec() {
   hideResult('dec'); clearError('dec');
 }
 
-// ── Copy ──
+// ── COPY HASIL KE CLIPBOARD ──
 async function copyResult(id, btn) {
   const text = document.getElementById(id).textContent.trim();
   if (!text) return;
@@ -121,24 +118,35 @@ async function copyResult(id, btn) {
   setTimeout(() => { btn.innerHTML = orig; }, 1800);
 }
 
+// ── FALLBACK COPY (TANPA CLIPBOARD API) ──
 function fallbackCopy(text) {
   const ta = Object.assign(document.createElement('textarea'), { value: text, style: 'position:fixed;opacity:0' });
   document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
 }
 
-// ── Helpers ──
+// ── TAMPILKAN PESAN ERROR ──
 function showError(tab, msg) {
   const e = document.getElementById('error' + cap(tab));
   document.getElementById('error' + cap(tab) + 'Msg').textContent = msg;
   e.classList.add('visible');
 }
+
+// ── HAPUS PESAN ERROR ──
 function clearError(tab) { document.getElementById('error' + cap(tab)).classList.remove('visible'); }
+
+// ── TAMPILKAN KOTAK HASIL ──
 function showResult(tab) { document.getElementById('result' + cap(tab)).classList.add('visible'); }
+
+// ── SEMBUNYIKAN KOTAK HASIL ──
 function hideResult(tab) { document.getElementById('result' + cap(tab)).classList.remove('visible'); }
+
+// ── KAPITALISASI HURUF PERTAMA ──
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ── ANIMASI FLASH PADA INPUT ──
 function flash(el) { el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 350); }
 
-// ── Keyboard shortcut Ctrl+Enter ──
+// ── KEYBOARD SHORTCUT CTRL+ENTER ──
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
     document.getElementById('tabEnc').classList.contains('active') ? doEncrypt() : doDecrypt();
