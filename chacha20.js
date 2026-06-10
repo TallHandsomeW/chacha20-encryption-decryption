@@ -139,6 +139,7 @@ function generateNonce() {
 function parseKey(hexKey) {
   const clean = hexKey.replace(/\s+/g, '');
   if (clean.length !== 64) throw new Error('Key harus 64 karakter hex (32 byte).');
+  if (!/^[0-9a-fA-F]+$/.test(clean)) throw new Error('Key hanya boleh karakter hex (0-9, a-f).');
   return hexToBytes(clean);
 }
 
@@ -146,6 +147,7 @@ function parseKey(hexKey) {
 function parseNonce(hexNonce) {
   const clean = hexNonce.replace(/\s+/g, '');
   if (clean.length !== 24) throw new Error('Nonce harus 24 karakter hex (12 byte).');
+  if (!/^[0-9a-fA-F]+$/.test(clean)) throw new Error('Nonce hanya boleh karakter hex (0-9, a-f).');
   return hexToBytes(clean);
 }
 
