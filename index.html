@@ -9,7 +9,7 @@
 <body>
 <div class="page-wrapper">
 
-  <!-- Header -->
+  <!-- ── HEADER ── -->
   <header class="app-header">
     <div class="header-top">
       <div class="header-icon">
@@ -25,10 +25,10 @@
     </div>
   </header>
 
-  <!-- Card -->
+  <!-- ── CARD ── -->
   <div class="card">
 
-    <!-- Tabs -->
+    <!-- ── TABS ── -->
     <div class="tabs">
       <button class="tab-btn active" id="tabEnc" onclick="switchTab('enc')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -46,21 +46,21 @@
       </button>
     </div>
 
-    <!-- ===== PANEL ENKRIPSI ===== -->
+    <!-- ── PANEL ENKRIPSI ── -->
     <div id="panelEnc">
 
-      <!-- Plaintext -->
+      <!-- ── INPUT PLAINTEXT ── -->
       <div class="field">
         <label for="plaintextInput">Plaintext (Pesan Asli)</label>
         <textarea id="plaintextInput" placeholder="Masukkan pesan yang ingin dienkripsi..."></textarea>
       </div>
 
-      <!-- Key + Nonce: 2 kolom berdampingan -->
+      <!-- ── INPUT KEY & NONCE ── -->
       <div class="field-row">
         <div class="field" style="margin-bottom:0">
           <label for="keyInputEnc">Key (32 karakter)</label>
           <div class="input-group">
-            <input type="password" id="keyInputEnc" placeholder="Masukkan secret key..." autocomplete="off" spellcheck="false" />
+            <input type="password" id="keyInputEnc" placeholder="64 karakter hex (0–9, a–f)" autocomplete="off" spellcheck="false" />
             <div class="input-actions">
               <button class="icon-btn" title="Tampilkan/sembunyikan" onclick="toggleKeyVisibility('keyInputEnc', this)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -81,7 +81,7 @@
         <div class="field" style="margin-bottom:0">
           <label for="nonceInputEnc">Nonce (12 byte)</label>
           <div class="input-group">
-            <input type="text" id="nonceInputEnc" placeholder="Otomatis / manual..." autocomplete="off" spellcheck="false" />
+            <input type="text" id="nonceInputEnc" placeholder="24 karakter hex (0–9, a–f)" autocomplete="off" spellcheck="false" />
             <div class="input-actions">
               <button class="icon-btn" title="Generate nonce acak" onclick="doGenerateNonce('nonceInputEnc')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -94,7 +94,7 @@
         </div>
       </div>
 
-      <!-- Error -->
+      <!-- ── ALERT ERROR ── -->
       <div class="alert alert-error" id="errorEnc">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -102,7 +102,7 @@
         <span id="errorEncMsg"></span>
       </div>
 
-      <!-- Tombol Enkripsi -->
+      <!-- ── TOMBOL ENKRIPSI ── -->
       <button class="btn btn-primary" onclick="doEncrypt()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2"/>
@@ -111,7 +111,7 @@
         Enkripsi Pesan
       </button>
 
-      <!-- Output Ciphertext -->
+      <!-- ── OUTPUT CIPHERTEXT ── -->
       <div class="result-box" id="resultEnc">
         <div class="result-header">
           <span class="result-label">Ciphertext (Hasil Enkripsi)</span>
@@ -138,21 +138,21 @@
     </div><!-- /panelEnc -->
 
 
-    <!-- ===== PANEL DEKRIPSI ===== -->
+    <!-- ── PANEL DEKRIPSI ── -->
     <div id="panelDec" style="display:none">
 
-      <!-- Ciphertext input -->
+      <!-- ── INPUT CIPHERTEXT ── -->
       <div class="field">
         <label for="ciphertextInput">Ciphertext (Pesan Terenkripsi)</label>
         <textarea id="ciphertextInput" class="mono" placeholder="Masukkan ciphertext yang ingin didekripsi..."></textarea>
       </div>
 
-      <!-- Key + Nonce: 2 kolom berdampingan -->
+      <!-- ── INPUT KEY & NONCE ── -->
       <div class="field-row">
         <div class="field" style="margin-bottom:0">
           <label for="keyInputDec">Key (32 karakter)</label>
           <div class="input-group">
-            <input type="password" id="keyInputDec" placeholder="Masukkan secret key..." autocomplete="off" spellcheck="false" />
+            <input type="password" id="keyInputDec" placeholder="64 karakter hex (0–9, a–f)" autocomplete="off" spellcheck="false" />
             <div class="input-actions">
               <button class="icon-btn" title="Tampilkan/sembunyikan" onclick="toggleKeyVisibility('keyInputDec', this)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -167,12 +167,12 @@
         <div class="field" style="margin-bottom:0">
           <label for="nonceInputDec">Nonce (12 byte)</label>
           <div class="input-group">
-            <input type="text" id="nonceInputDec" placeholder="Masukkan nonce..." autocomplete="off" spellcheck="false" />
+            <input type="text" id="nonceInputDec" placeholder="24 karakter hex (0–9, a–f)" autocomplete="off" spellcheck="false" />
           </div>
         </div>
       </div>
 
-      <!-- Error -->
+      <!-- ── ALERT ERROR ── -->
       <div class="alert alert-error" id="errorDec">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -180,7 +180,7 @@
         <span id="errorDecMsg"></span>
       </div>
 
-      <!-- Tombol Dekripsi -->
+      <!-- ── TOMBOL DEKRIPSI ── -->
       <button class="btn btn-primary" onclick="doDecrypt()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2"/>
@@ -189,7 +189,7 @@
         Dekripsi Pesan
       </button>
 
-      <!-- Output Plaintext -->
+      <!-- ── OUTPUT PLAINTEXT ── -->
       <div class="result-box" id="resultDec">
         <div class="result-header">
           <span class="result-label">Plaintext (Hasil Dekripsi)</span>
@@ -217,7 +217,7 @@
 
   </div><!-- /card -->
 
-  <!-- Info strip -->
+  <!-- ── INFO STRIP ── -->
   <div class="info-strip">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/>
@@ -225,6 +225,7 @@
     Semua proses berjalan di sisi klien - Tidak ada data dikirim ke server
   </div>
 
+  <!-- ── FOOTER ── -->
   <footer class="app-footer">
     <p>Implementasi ChaCha20 - Mata Kuliah Sistem Keamanan</p>
     <p>Universitas Maritim Raja Ali Haji - 2025/2026</p>
