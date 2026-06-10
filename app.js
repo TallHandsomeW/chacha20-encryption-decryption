@@ -38,6 +38,8 @@ function doEncrypt() {
     document.getElementById('ciphertextOut').textContent = ciphertext;
     if (!nonce) document.getElementById('nonceInputEnc').value = usedNonce;
     showResult('enc');
+    // Auto-clear panel dekripsi agar tidak ada data lama yang membingungkan
+    resetDec();
   } catch (e) {
     showError('enc', e.message);
   }
